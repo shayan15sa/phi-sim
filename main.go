@@ -26,7 +26,7 @@ func newPlanet(pos rl.Vector2, radius float32, velocity rl.Vector2, acc rl.Vecto
 func (p *planet) DrawPlanet() {
 	rl.DrawCircle(int32(p.pos.X), int32(p.pos.Y), p.radius, p.color)
 }
-func calcAcc(p *planet, op *planet) rl.Vector2 {
+func (p *planet) calcAcc(op *planet) rl.Vector2 {
 	r := rl.Vector2Subtract(op.pos, p.pos)
 	if rl.Vector2Length(r) <= 300 {
 		return rl.Vector2Zero()
@@ -47,7 +47,7 @@ func (p *planet) updateAcc(planets []planet) {
 		if p == &(planets)[i] {
 			continue
 		}
-		addAcc = rl.Vector2Add(addAcc, calcAcc(p, &(planets)[i]))
+		addAcc = rl.Vector2Add(addAcc, p.calcAcc(&(planets)[i]))
 	}
 	p.acc = addAcc
 }
@@ -94,7 +94,7 @@ func main() {
 
 	for !rl.WindowShouldClose() {
 		// Update your planetects here (for example, physics updates)
-		for i := range len(planets) {
+		for i := range planets {
 			planet := &planets[i]
 			planet.updateAcc(planets)
 			planet.updateVelocity()
