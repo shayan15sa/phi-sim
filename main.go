@@ -3,11 +3,13 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gen2brain/raylib-go/raylib"
 	"math"
 	"math/rand"
+
+	"github.com/gen2brain/raylib-go/raylib"
 )
+
+const G float32 = 50
 
 type planet struct {
 	pos      rl.Vector2
@@ -18,16 +20,13 @@ type planet struct {
 	color    rl.Color
 }
 
-const G float32 = 50
-
 func newPlanet(pos rl.Vector2, radius float32, velocity rl.Vector2, acc rl.Vector2, mass float32, color rl.Color) planet {
 	return planet{pos, radius, velocity, acc, mass, color}
 }
-
-func DrawPlanet(o *planet) {
-	rl.DrawCircle(int32(o.pos.X), int32(o.pos.Y), o.radius, o.color)
+func (p *planet) DrawPlanet() {
+	rl.DrawCircle(int32(p.pos.X), int32(p.pos.Y), p.radius, p.color)
 }
-func calcAcc(p *planet, op *planet) rl.Vector2 {
+func (p *planet) calcAcc(op *planet) rl.Vector2 {
 	r := rl.Vector2Subtract(op.pos, p.pos)
 	if rl.Vector2Length(r) <= 300 {
 		return rl.Vector2Zero()
@@ -35,37 +34,27 @@ func calcAcc(p *planet, op *planet) rl.Vector2 {
 	g := (G * op.mass) / float32(math.Pow(float64(rl.Vector2Length(r)), 2))
 	return rl.Vector2Scale(rl.Vector2Normalize(r), g)
 }
-func updateAcc(planets *[]planet) {
-	for i := 0; i < len(*planets); i++ {
-		p := &(*planets)[i] // Get a pointer to the planet in the slice
-		addAcc := rl.Vector2Zero()
-
-		// Inner loop should use 'o' as the index for other planets
-		for o := 0; o < len(*planets); o++ {
-			// Skip the planet itself
-			if p == &(*planets)[o] {
-				continue
-			}
-			addAcc = rl.Vector2Add(addAcc, calcAcc(p, &(*planets)[o]))
+func (p *planet) updateVelocity() {
+	p.velocity = rl.Vector2Add(p.velocity, p.acc)
+}
+func (p *planet) updatePos() {
+	p.pos = rl.Vector2Add(p.pos, p.velocity)
+}
+func (p *planet) updateAcc(planets []planet) {
+	addAcc := rl.Vector2Zero()
+	for i := range len(planets) {
+		// Skip the planet itself
+		if p == &(planets)[i] {
+			continue
 		}
-
-		// Update the planet's acceleration
-		p.acc = addAcc
+		addAcc = rl.Vector2Add(addAcc, p.calcAcc(&(planets)[i]))
 	}
-}
-func updateVelocity(planets *[]planet) {
-	for i := 0; i < len(*planets); i++ {
-		(*planets)[i].velocity = rl.Vector2Add((*planets)[i].velocity, (*planets)[i].acc)
-	}
-}
-func updatePos(planets *[]planet) {
-	for i := 0; i < len(*planets); i++ {
-		(*planets)[i].pos = rl.Vector2Add((*planets)[i].pos, (*planets)[i].velocity)
-	}
+	p.acc = addAcc
 }
 func main() {
 	// Initialize window
 	rl.InitWindow(1000, 700, "Gravity Simulation")
+	defer rl.CloseWindow()
 
 	// Set target FPS
 	rl.SetTargetFPS(60)
@@ -76,12 +65,12 @@ func main() {
 	// Planet Data: [radius, mass, distance from Sun, orbital velocity, color]
 	planetData := [][]float32{
 		// name: radius, mass, distance from Sun, orbital velocity, color
-		{10, 0.33, 58, 0.07, 255},  // Mercury
-		{12, 4.87, 108, 0.05, 255}, // Venus
-		{13, 5.97, 150, 0.03, 0},   // Earth
-		{11, 0.642, 228, 0.02, 255},// Mars
-		{35, 1898, 778, 0.01, 255}, // Jupiter
-		{30, 568, 1427, 0.009, 255}, // Saturn
+		{10, 0.33, 58, 0.07, 255},    // Mercury
+		{12, 4.87, 108, 0.05, 255},   // Venus
+		{13, 5.97, 150, 0.03, 0},     // Earth
+		{11, 0.642, 228, 0.02, 255},  // Mars
+		{35, 1898, 778, 0.01, 255},   // Jupiter
+		{30, 568, 1427, 0.009, 255},  // Saturn
 		{25, 86.8, 2871, 0.006, 255}, // Uranus
 		{25, 102, 4495, 0.004, 255},  // Neptune
 	}
@@ -102,13 +91,15 @@ func main() {
 		planets = append(planets, planet)
 	}
 	camera := rl.NewCamera2D(rl.NewVector2(500, 350), rl.Vector2Zero(), 0, 0.1)
-	// planets = append(planets, newPlanet(rl.NewVector2(300, 300), 35, rl.NewVector2(0.2, 0), rl.NewVector2(0, 0), 3, rl.Red))
-	// planets = append(planets, newPlanet(rl.NewVector2(900, 600), 35, rl.NewVector2(0, -0.3), rl.NewVector2(0, 0), 6, rl.Blue))
+
 	for !rl.WindowShouldClose() {
 		// Update your planetects here (for example, physics updates)
-		updateAcc(&planets)
-		updateVelocity(&planets)
-		updatePos(&planets)
+		for i := range planets {
+			planet := &planets[i]
+			planet.updateAcc(planets)
+			planet.updateVelocity()
+			planet.updatePos()
+		}
 		// Begin drawing
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
@@ -120,11 +111,9 @@ func main() {
 			camera.Zoom -= 0.1 // Zoom out
 		}
 		if rl.IsKeyPressed(rl.KeyK) {
-
 			camera.Zoom += 0.05 // Zoom in
 		}
 		if rl.IsKeyPressed(rl.KeyJ) {
-
 			camera.Zoom -= 0.05 // Zoom in
 		}
 		if rl.IsKeyDown(rl.KeyW) {
@@ -139,16 +128,12 @@ func main() {
 		if rl.IsKeyDown(rl.KeyD) {
 			camera.Offset.X -= 10
 		}
-		// Draw a circle
-		for _, o := range planets {
-			DrawPlanet(&o)
-			fmt.Println(o)
+		// Draw planets
+		for _, p := range planets {
+			p.DrawPlanet()
 		}
 		// End drawing
 		rl.EndMode2D()
 		rl.EndDrawing()
 	}
-
-	// Close window
-	rl.CloseWindow()
 }
