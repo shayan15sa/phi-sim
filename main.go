@@ -1,3 +1,5 @@
+// Author: Shayan Salehe <shay.sale86@gmail.com>
+// Licence: MIT
 package main
 
 import (
