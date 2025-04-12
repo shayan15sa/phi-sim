@@ -1,6 +1,6 @@
 module phi-sim
 
-go 1.24.1
+go 1.23
 
 require (
 	github.com/ebitengine/purego v0.8.2 // indirect
