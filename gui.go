@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gen2brain/raylib-go/raylib"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 func cameraControl(camera *rl.Camera2D) {
@@ -39,6 +39,7 @@ var ccolor = 0
 var editPlanets = []planet{}
 
 func editPlanetUI() {
+	DrawPlanets(editPlanets)
 	cursorPos := rl.GetMousePosition()
 	scrollMove := rl.GetMouseWheelMove()
 	if scrollMove != 0 {
@@ -54,10 +55,12 @@ func editPlanetUI() {
 	if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
 		ccolor = (ccolor + 1) % len(colors)
 	}
-	DrawPlanets(editPlanets)
 }
 func getAddedPlanets() []planet {
 	return editPlanets
+}
+func emptyAddedPlanets() {
+	editPlanets = []planet{}
 }
 
 // TODO: add a textbox for inputing the math https://www.raylib.com/examples/text/loader.html?name=text_input_box

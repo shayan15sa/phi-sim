@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gen2brain/raylib-go/raylib"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 const WIN_HEIGHT int32 = 1000
@@ -33,6 +33,10 @@ func main() {
 	for !rl.WindowShouldClose() {
 		if rl.IsKeyPressed(rl.KeyQ) {
 			rl.CloseWindow()
+		}
+		if rl.IsKeyPressed(rl.KeyC) {
+			emptyAddedPlanets()
+			currentMode = Editing
 		}
 		// Update your planetects here (for example, physics updates)
 		switch currentMode {

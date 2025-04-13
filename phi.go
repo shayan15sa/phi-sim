@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/gen2brain/raylib-go/raylib"
 	"math"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const G float32 = 50
+const G float32 = 90
 
 type planet struct {
 	pos      rl.Vector2
@@ -29,7 +30,7 @@ func DrawPlanets(ps []planet) {
 }
 func (p *planet) calcAcc(op *planet) rl.Vector2 {
 	r := rl.Vector2Subtract(op.pos, p.pos)
-	if rl.Vector2Length(r) <= 300 {
+	if rl.Vector2Length(r) <= 110 {
 		return rl.Vector2Zero()
 	}
 	g := (G * op.mass) / float32(math.Pow(float64(rl.Vector2Length(r)), 2))
