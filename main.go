@@ -39,6 +39,8 @@ func main() {
 			currentMode = Editing
 		}
 		// Update your planetects here (for example, physics updates)
+		rl.BeginDrawing()
+		rl.ClearBackground(rl.RayWhite)
 		switch currentMode {
 		case Editing:
 			editPlanetUI()
@@ -56,8 +58,6 @@ func main() {
 			}
 		}
 		// Begin drawing
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.RayWhite)
 
 		// End drawing
 		rl.EndDrawing()
