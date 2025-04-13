@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -38,14 +38,19 @@ var editPlanets = []planet{}
 
 func editPlanetUI() {
 	cursorPos := rl.GetMousePosition()
+	scrollMove := rl.GetMouseWheelMove()
+	if scrollMove != 0 {
+		radius += scrollMove
+	}
 	rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), radius, rl.Red)
+	fmt.Println("edit and draw")
 	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
-		editPlanets = append(editPlanets, newPlanet(cursorPos, radius, rl.Vector2Zero(), rl.Vector2Zero(), 1, rl.Red))
+		editPlanets = append(editPlanets, newPlanet(cursorPos, radius, rl.Vector2Zero(), rl.Vector2Zero(), 100, rl.Red))
 		// TODO: Add a better way to indicate that the planet has been added
 		rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), radius*2, rl.Yellow)
 	}
-	for _, p := range editPlanets {
-		p.DrawPlanet()
-	}
-	log.Println("edit planet")
+	DrawPlanets(editPlanets)
+}
+func getAddedPlanets() []planet {
+	return editPlanets
 }

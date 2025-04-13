@@ -1,9 +1,12 @@
 package main
-import(
-	"math"
+
+import (
 	"github.com/gen2brain/raylib-go/raylib"
+	"math"
 )
+
 const G float32 = 50
+
 type planet struct {
 	pos      rl.Vector2
 	radius   float32
@@ -18,6 +21,11 @@ func newPlanet(pos rl.Vector2, radius float32, velocity rl.Vector2, acc rl.Vecto
 }
 func (p *planet) DrawPlanet() {
 	rl.DrawCircle(int32(p.pos.X), int32(p.pos.Y), p.radius, p.color)
+}
+func DrawPlanets(ps []planet) {
+	for _, p := range ps {
+		p.DrawPlanet()
+	}
 }
 func (p *planet) calcAcc(op *planet) rl.Vector2 {
 	r := rl.Vector2Subtract(op.pos, p.pos)
@@ -43,4 +51,12 @@ func (p *planet) updateAcc(planets []planet) {
 		addAcc = rl.Vector2Add(addAcc, p.calcAcc(&(planets)[i]))
 	}
 	p.acc = addAcc
+}
+func updatePlanets(planets []planet) {
+	for i := range planets {
+		planet := &planets[i]
+		planet.updateAcc(planets)
+		planet.updateVelocity()
+		planet.updatePos()
+	}
 }
