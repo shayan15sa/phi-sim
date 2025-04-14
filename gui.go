@@ -33,24 +33,31 @@ func cameraControl(camera *rl.Camera2D) {
 	}
 }
 
-var radius float32 = 10
+var cradius float32 = 10
+var colors = []rl.Color{rl.Red, rl.Blue, rl.Black, rl.Orange, rl.SkyBlue, rl.Purple, rl.Pink, rl.Green}
+var ccolor = 0
 var editPlanets = []planet{}
 
 func editPlanetUI() {
 	cursorPos := rl.GetMousePosition()
 	scrollMove := rl.GetMouseWheelMove()
 	if scrollMove != 0 {
-		radius += scrollMove
+		cradius += scrollMove
 	}
-	rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), radius, rl.Red)
+	rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), cradius, colors[ccolor])
 	fmt.Println("edit and draw")
 	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
-		editPlanets = append(editPlanets, newPlanet(cursorPos, radius, rl.Vector2Zero(), rl.Vector2Zero(), 100, rl.Red))
+		editPlanets = append(editPlanets, newPlanet(cursorPos, cradius, rl.Vector2Zero(), rl.Vector2Zero(), 100, colors[ccolor]))
 		// TODO: Add a better way to indicate that the planet has been added
-		rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), radius*2, rl.Yellow)
+		rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), cradius*2, rl.Yellow)
+	}
+	if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
+		ccolor = (ccolor + 1) % len(colors)
 	}
 	DrawPlanets(editPlanets)
 }
 func getAddedPlanets() []planet {
 	return editPlanets
 }
+
+// TODO: add a textbox for inputing the math https://www.raylib.com/examples/text/loader.html?name=text_input_box

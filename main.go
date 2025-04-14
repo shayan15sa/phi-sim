@@ -28,9 +28,12 @@ func main() {
 	// Set target FPS
 	rl.SetTargetFPS(60)
 	planets := []planet{}
-	// camera := rl.NewCamera2D(rl.NewVector2(float32(WIN_HEIGHT/2), float32(WIN_WIDTH/2)), rl.Vector2Zero(), 0, 0.1)
+	camera := rl.NewCamera2D(rl.NewVector2(float32(WIN_HEIGHT/2), float32(WIN_WIDTH/2)), rl.Vector2Zero(), 0, 1)
 	currentMode := Editing
 	for !rl.WindowShouldClose() {
+		if rl.IsKeyPressed(rl.KeyQ) {
+			rl.CloseWindow()
+		}
 		// Update your planetects here (for example, physics updates)
 		switch currentMode {
 		case Editing:
@@ -43,15 +46,16 @@ func main() {
 		case Simulating:
 			updatePlanets(planets)
 			DrawPlanets(planets)
+			cameraControl(&camera)
+			if rl.IsKeyPressed(rl.KeyP) {
+				currentMode = Editing
+			}
 		}
 		// Begin drawing
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
-		// rl.BeginMode2D(camera)
-		// cameraControl(&camera)
 
 		// End drawing
-		rl.EndMode2D()
 		rl.EndDrawing()
 	}
 }
