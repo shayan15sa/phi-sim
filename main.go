@@ -8,9 +8,9 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const WIN_HEIGHT int32 = 1000
+var WIN_HEIGHT int32 = 1000
 
-const WIN_WIDTH int32 = 700
+var WIN_WIDTH int32 = 700
 
 type RunningMode int
 
@@ -22,6 +22,7 @@ const (
 
 func main() {
 	// Initialize window
+	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.InitWindow(WIN_HEIGHT, WIN_WIDTH, "Gravity Simulation")
 	defer rl.CloseWindow()
 
@@ -31,6 +32,8 @@ func main() {
 	camera := rl.NewCamera2D(rl.NewVector2(float32(WIN_HEIGHT/2), float32(WIN_WIDTH/2)), rl.Vector2Zero(), 0, 1)
 	currentMode := Editing
 	for !rl.WindowShouldClose() {
+		WIN_HEIGHT = int32(rl.GetScreenHeight())
+		WIN_WIDTH = int32(rl.GetScreenWidth())
 		if rl.IsKeyPressed(rl.KeyQ) {
 			rl.CloseWindow()
 		}

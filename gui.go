@@ -38,7 +38,7 @@ var cradius float32 = 10
 var colors = []rl.Color{rl.Red, rl.Blue, rl.Black, rl.Orange, rl.SkyBlue, rl.Purple, rl.Pink, rl.Green}
 var ccolor = 0
 var editPlanets = []planet{}
-var massNumBox = NewNumBox(rl.NewRectangle(30, float32(WIN_HEIGHT/2)+150, 90, 40), 6, rl.Black, rl.SkyBlue)
+var massNumBox = NewNumBox(rl.NewRectangle(20, 10, 90, 40), 6, rl.Black, rl.SkyBlue)
 
 func editPlanetUI() {
 	DrawPlanets(editPlanets)
@@ -114,13 +114,17 @@ func (nb *NumBox) showNumBox() {
 	} else {
 		rl.DrawRectangleLines(int32(nb.rect.X), int32(nb.rect.Y), int32(nb.rect.Width), int32(nb.rect.Height), rl.LightGray)
 	}
-	rl.DrawText(nb.input, int32(nb.rect.X+5), int32(nb.rect.Y+8), 26, nb.foregroundColor)
+	if nb.input != "" {
+		rl.DrawText(nb.input, int32(nb.rect.X+5), int32(nb.rect.Y+8), 26, nb.foregroundColor)
+	}else{
+		rl.DrawText("mass", int32(nb.rect.X+5), int32(nb.rect.Y+8), 26, rl.LightGray)
+}
 }
 
 func (nb *NumBox) getMass() int {
 	i, err := strconv.Atoi(nb.input)
 	if err != nil {
-		fmt.Println("AHHHHHHHHHHHHHHHHHH")
+		fmt.Println("AHHHHHHHHHHHHHHHHHH line 127 gui.go")
 		// TODO : crach the program
 	}
 	return i
