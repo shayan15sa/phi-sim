@@ -1,9 +1,9 @@
 package main
 
 import (
-	"math"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"math"
+	"strconv"
 )
 
 const G float32 = 90
@@ -26,6 +26,7 @@ func (p *planet) DrawPlanet() {
 func DrawPlanets(ps []planet) {
 	for _, p := range ps {
 		p.DrawPlanet()
+		rl.DrawText(strconv.Itoa(int(p.mass)), int32(p.pos.X)-4, int32(p.pos.Y)-3, 20, rl.White)
 	}
 }
 func (p *planet) calcAcc(op *planet) rl.Vector2 {

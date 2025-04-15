@@ -38,7 +38,7 @@ var cradius float32 = 10
 var colors = []rl.Color{rl.Red, rl.Blue, rl.Black, rl.Orange, rl.SkyBlue, rl.Purple, rl.Pink, rl.Green}
 var ccolor = 0
 var editPlanets = []planet{}
-var massNumBox = NewNumBox(rl.NewRectangle(float32(WIN_WIDTH/2), float32(WIN_HEIGHT/2), 50, 30), 5, rl.Black, rl.SkyBlue)
+var massNumBox = NewNumBox(rl.NewRectangle(30, float32(WIN_HEIGHT/2)+150, 90, 40), 6, rl.Black, rl.SkyBlue)
 
 func editPlanetUI() {
 	DrawPlanets(editPlanets)
@@ -48,10 +48,12 @@ func editPlanetUI() {
 	if scrollMove != 0 {
 		cradius += scrollMove
 	}
-	rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), cradius, colors[ccolor])
+	if !massNumBox.mouseOnBox {
+		rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), cradius, colors[ccolor])
+	}
 	fmt.Println("edit and draw")
 	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
-		editPlanets = append(editPlanets, newPlanet(cursorPos, cradius, rl.Vector2Zero(), rl.Vector2Zero(), float32(massNumBox.getMass()),colors[ccolor]))
+		editPlanets = append(editPlanets, newPlanet(cursorPos, cradius, rl.Vector2Zero(), rl.Vector2Zero(), float32(massNumBox.getMass()), colors[ccolor]))
 		// TODO: Add a better way to indicate that the planet has been added
 		rl.DrawCircle(int32(cursorPos.X), int32(cursorPos.Y), cradius*2, rl.Yellow)
 	}
@@ -112,12 +114,12 @@ func (nb *NumBox) showNumBox() {
 	} else {
 		rl.DrawRectangleLines(int32(nb.rect.X), int32(nb.rect.Y), int32(nb.rect.Width), int32(nb.rect.Height), rl.LightGray)
 	}
-	rl.DrawText(nb.input, int32(nb.rect.X+5), int32(nb.rect.Y+8), 16, nb.foregroundColor)
+	rl.DrawText(nb.input, int32(nb.rect.X+5), int32(nb.rect.Y+8), 26, nb.foregroundColor)
 }
 
 func (nb *NumBox) getMass() int {
 	i, err := strconv.Atoi(nb.input)
-	if err != nil{
+	if err != nil {
 		fmt.Println("AHHHHHHHHHHHHHHHHHH")
 		// TODO : crach the program
 	}
