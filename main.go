@@ -50,12 +50,14 @@ func main() {
 				fmt.Println("mode changing")
 			}
 		case Simulating:
+			rl.BeginMode2D(camera)
 			updatePlanets(planets)
 			DrawPlanets(planets)
 			cameraControl(&camera)
 			if rl.IsKeyPressed(rl.KeyP) {
 				currentMode = Editing
 			}
+			rl.EndMode2D()
 		}
 		// Begin drawing
 
